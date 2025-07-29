@@ -1,0 +1,3 @@
+# 必要なPythonパッケージ
+deep-translator==1.11.4
+requests==2.31.0
