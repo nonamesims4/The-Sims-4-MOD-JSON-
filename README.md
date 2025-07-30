@@ -47,8 +47,8 @@
 本ツールはThe Sims 4 MODのJSON翻訳処理を目的としており、Google Drive内の個人情報アクセスや外部不正通信は行いません。
 安心してご利用いただくために、コードの中身を目を通して理解したうえで実行することをおすすめします。
 
-不安がある場合は、こちらのGitHubリポジトリのページもご確認ください。
-https://github.com/nonamesims4/The-Sims-4-MOD-JSON-
+不安がある場合は、こちらのGitHubリポジトリのページもご確認ください： 🌐https://github.com/nonamesims4/The-Sims-4-MOD-JSON-
+またはこちらから直接ノートブックにアクセスできます： 🌐https://colab.research.google.com/github/nonamesims4/The-Sims-4-MOD-JSON-/blob/main/sims4json%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E7%BF%BB%E8%A8%B3%E4%BF%AE%E6%AD%A3%E3%83%84%E3%83%BC%E3%83%AB%E5%85%B1%E6%9C%89%E7%94%A8.ipynb
 
 🛠️ 技術仕様
 - 使用ライブラリ：deep-translator
