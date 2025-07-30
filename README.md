@@ -1,6 +1,6 @@
 このツールについて
-このツールは The Sims 4 MOD用のJSONファイル を
-自動で日本語に翻訳するものです。
+
+このツールは The Sims 4 MOD用のJSONファイルを自動で日本語に翻訳するものです。
 
 🔄 JSONファイルの変換は以下のサイトを利用してください：
 🌐 STBL Studio → https://stbl.sims4toolkit.com/
