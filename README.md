@@ -3,8 +3,8 @@
 このツールは The Sims 4 MOD用のJSONファイルを自動で日本語に翻訳するものです
 
 
-🔄 JSONファイルの変換は以下のサイトを利用してください：
-🌐 STBL Studio → https://stbl.sims4toolkit.com/
+🔄 JSONファイルの変換はこちらのサイトを利用してください：
+🌐  <a href="https://stbl.sims4toolkit.com/" target="_blank" rel="noopener noreferrer">STBL Studio</a>
 
 
 🔧 機能
@@ -65,7 +65,7 @@
 A. こちらの <a href="https://stbl.sims4toolkit.com/" target="_blank" rel="noopener noreferrer">STBL Studio</a>でstblに変換し保存後、翻訳ソフトで読み込むと翻訳パッケージとして使用できます。念のためバックアップを取ってからの使用をおすすめします。
 
 **Q. 大きなJSONファイルでも変換できる？**  
-A. はい、UTF-8形式のJSONファイルならなら数千エントリでもOK！(自分が試したのは3000行)ただし、大きなファイルは処理に時間がかかる場合があります。
+A. はい、UTF-8形式のJSONファイルなら数千エントリでもOK！(自分が試したのは3000行)ただし、大きなファイルは処理に時間がかかる場合があります。
 
 
 
