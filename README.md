@@ -59,7 +59,10 @@
 - 日本語テキストでもタグ置換・アスタリスク削除を実行
 - Colabベース
 
+## ❓ よくある質問（FAQ）
 
+**Q. 翻訳したファイルをそのままMODに使っていいの？**  
+A. こちらのサイトで <a href="https://stbl.sims4toolkit.com/" target="_blank" rel="noopener noreferrer">stbl に変換</a> 後、翻訳ソフトで読み込むと翻訳パッケージとして使用できます。念のためバックアップを取ってからの使用をおすすめします。
 
 
 
