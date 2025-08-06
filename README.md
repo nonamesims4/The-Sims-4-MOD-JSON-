@@ -4,10 +4,8 @@
 翻訳なしで{M0.he}、{F0.she} を {M0.彼}、{F0.彼女}に変換だけしたい人専用ツールできました→<a href="https://nonamesims4.github.io/The-Sims-4-MOD-JSON-/" target="_blank" rel="noopener noreferrer">Sims4専用JSONファイルタグ置換ツール翻訳なしバージョン</a>    
 
 
-🔄 JSONファイルの変換はこちらのサイトまたはソフトを利用してください：  
+🔄 JSONファイルの変換はこちらのサイトを利用してください：  
 🌐 <a href="https://stbl.sims4toolkit.com/" target="_blank" rel="noopener noreferrer">STBL Studio</a>  
-🌐 <a href="https://github.com/voky1" target="_blank" rel="noopener noreferrer">The Sims 4 Translator</a>  
-
 
 🔧 機能
 
