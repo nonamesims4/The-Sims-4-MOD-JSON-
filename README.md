@@ -1,11 +1,14 @@
 このツールについて
 
 このツールはTheSims4MOD用のJSONファイルを自動で日本語に翻訳しながら{M0.he}、{F0.she} などのプレースホルダーを {M0.彼}、{F0.彼女}に変換できるツールです。翻訳後でも{M0.he}、{F0.she} を {M0.彼}、{F0.彼女}に変換できます。  
-翻訳なしで{M0.he}、{F0.she} を {M0.彼}、{F0.彼女}に変換だけしたい人専用ツールできました→<a href="https://nonamesims4.github.io/The-Sims-4-MOD-JSON-/" target="_blank" rel="noopener noreferrer">Sims4専用JSONファイルタグ置換ツール翻訳なしバージョン</a>    
+🆕翻訳なしで{M0.he}、{F0.she} を {M0.彼}、{F0.彼女}に変換だけしたい人専用ツールできました→<a href="https://nonamesims4.github.io/The-Sims-4-MOD-JSON-/" target="_blank" rel="noopener noreferrer">Sims4専用JSONファイルタグ置換ツール翻訳なしバージョン</a>    
+🆕<a href="https://github.com/voky1" target="_blank" rel="noopener noreferrer">TheSims4Translator</a>から出力される"Entries" 構造対応のjsonファイルに対応できるようになりました。出力後のJSONファイルは他ツールに使用できるほかそのままソフトに読み込むと翻訳パッケージが作成できます  
 
 
-🔄 JSONファイルの変換はこちらのサイトを利用してください：  
+🔄 JSONファイルの変換はこちらのサイトやソフトを利用してください：  
 🌐 <a href="https://stbl.sims4toolkit.com/" target="_blank" rel="noopener noreferrer">STBL Studio</a>  
+🌐 <a href="https://github.com/voky1" target="_blank" rel="noopener noreferrer">TheSims4Translator</a>
+
 
 🔧 機能
 
@@ -18,6 +21,7 @@
 - 📊 翻訳進捗のリアルタイム表示
 - ⏭️ 日本語テキストの自動スキップ
 - 📥 翻訳済みファイルのダウンロード
+- 🌍"Entries" 構造対応のjsonファイルに対応
 
 
 
@@ -33,7 +37,7 @@
 ⚠️ 注意事項
 
 - 翻訳には deep-translator API を使用しています
-- 容量ファイルは処理に時間がかかる場合があります
+- 翻訳の行数によっては処理に時間がかかる場合があります
 - 日本語のテキストは自動でスキップされますが、タグ置換とアスタリスク削除は実行されます
 - 出力後に`__PH_0__` や `__PH_1__`といったトークンが出る場合があります→ jsonファイルはテキストで編集が可能です。それぞれ {0.SimFirstName} や {1.SimFirstName} に置き換えてください。（または翻訳ソフト内で修正してください。
 - こちらで`__PH_0__` や `__PH_1__`といったトークンが修正できるようになりました→<a href="https://nonamesims4.github.io/The-Sims-4-MOD-JSON-/" target="_blank" rel="noopener noreferrer">Sims4専用JSONファイルタグ置換ツール翻訳なしバージョン</a>
