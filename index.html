@@ -2,557 +2,446 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sims4専用JSONファイルタグ置換ツール</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sims4Translator対応JSONファイルプレースホルダー置換ツール</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
+            background-color: #f0f8ff;
+            color: #1a202c;
             font-family: 'Inter', sans-serif;
-            background-color: #131314; /* Gemini Dark Background */
-            color: #ffffff; /* Brighter White Text */
-            margin: 0;
-            height: 100vh; /* Full viewport height */
-            display: flex; /* Use flexbox for the body to ensure layout fills screen */
-            flex-direction: column;
-        }
-        .main-layout-container {
-            display: flex;
-            flex: 1; /* Allows it to grow and fill available space */
-            overflow: hidden; /* Hide overflow to prevent horizontal scroll */
-            background-color: #1f1f20; /* Slightly lighter dark background for container */
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6); /* Darker shadow for dark theme */
-            margin: 20px; /* Margin around the entire layout */
-        }
-
-        /* Left Sidebar Styles */
-        .sidebar {
-            width: 280px; /* Fixed width for sidebar */
-            background-color: #1a1a1a; /* Slightly different dark background for sidebar */
-            border-right: 1px solid #3c4043; /* Darker border on the right */
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5); /* Subtle shadow */
-            overflow-y: auto; /* Make sidebar scrollable if content overflows */
-        }
-        .sidebar-header {
-            font-size: 1.5rem; /* text-2xl - Adjusted for smaller size */
-            font-weight: 700; /* font-bold */
-            color: #8ab4f8; /* Gemini Accent Blue */
-            margin-bottom: 24px;
-            text-align: center;
-        }
-        .feature-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .feature-list li:hover {
-            background-color: #3c4043; /* Darker grey for hover */
-            color: #8ab4f8; /* Accent color on hover */
-        }
-        .feature-list li.active {
-            background-color: #8ab4f8; /* Active item background - Accent color */
-            color: white;
-        }
-        .sidebar-section-title {
-            font-size: 1.125rem; /* text-lg */
-            font-weight: 600;
-            color: #ffffff; /* Brighter White Text */
-            margin-top: 24px;
-            margin-bottom: 12px;
-            border-bottom: 1px solid #3c4043; /* Darker border */
-            padding-bottom: 8px;
-        }
-        .sidebar-content p, .sidebar-content ul, .sidebar-content li {
-            font-size: 0.9375rem; /* Slightly smaller for sidebar text */
-            color: #ffffff; /* Brighter White Text */
-            line-height: 1.6;
-        }
-        .sidebar-content a {
-            color: #8ab4f8; /* Gemini Accent Blue for links */
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .sidebar-content a:hover {
-            text-decoration: underline;
-        }
-        .sidebar-content ul {
-            list-style-type: disc;
-            margin-left: 20px;
-            margin-bottom: 12px;
-        }
-        .sidebar-content ul.no-bullet {
-            list-style-type: none;
-            margin-left: 0;
-        }
-        .sidebar-content ul.no-bullet li {
-            margin-bottom: 4px;
-        }
-        .accent-symbol { /* New style for symbols */
-            color: #8ab4f8; /* Gemini Accent Blue */
-        }
-
-
-        /* Main Content Area Styles */
-        .main-content {
-            flex: 1; /* Fills remaining space */
-            padding: 32px;
-            overflow-y: auto; /* Scrollable content */
-        }
-        .tool-container {
-            max-width: 700px; /* Max width for the tool content within main-content */
-            margin: 0 auto; /* Center the tool content */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 32px;
+            padding: 2rem 1rem;
         }
-
-        /* Existing component styles */
-        h1 {
-            color: #8ab4f8; /* Gemini Accent Blue for main content H1 title */
+        .container {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
-        .main-content p { /* Specific rule for main content paragraphs */
-            color: #ffffff; /* Brighter White Text for main content paragraphs */
-        }
-        .btn-primary {
-            background-color: #8ab4f8; /* Gemini Accent Blue */
-            color: white;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-        }
-        .btn-primary:hover {
-            background-color: #6a9af8; /* Darker accent on hover */
-        }
-        .btn-secondary {
-            background-color: #8ab4f8; /* Gemini Accent Blue */
-            color: white; /* Changed to white for better contrast on dark background */
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-            display: inline-block;
+        .header { text-align: center; margin-bottom: 2.5rem; }
+        .header h1 { font-size: 2rem; font-weight: 700; color: #2b6cb0; margin-bottom: 0.75rem; line-height: 1.2; }
+        .header p { color: #4a5568; font-size: 1.125rem; line-height: 1.6; }
+        .header p a { color: #2b6cb0; font-weight: 700; text-decoration: underline; transition: color 0.3s ease; }
+        .file-upload-label {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background-color: #ebf8ff; color: #2c5282; padding: 3rem; border-radius: 1.5rem;
+            cursor: pointer; font-weight: 600; transition: all 0.18s ease; border: 2px dashed #90cdf4;
             text-align: center;
-            text-decoration: none;
         }
-        .btn-secondary:hover {
-            background-color: #6a9af8; /* Darker accent on hover */
+        .file-upload-label:hover { background-color: #e2f2ff; border-color: #63b3ed; transform: translateY(-2px); }
+        .file-upload-label svg { width: 4rem; height: 4rem; margin-bottom: 1.5rem; color: #63b3ed; }
+        input[type="file"] { display: none; }
+        #file-name { text-align: center; margin-top: 1rem; color: #718096; min-height: 1.5rem; font-weight: 600; }
+        .btn-process {
+            background: linear-gradient(45deg, #68d391, #38a169); color: white; padding: 1rem;
+            border-radius: 0.75rem; font-weight: 700; font-size: 1.125rem; width: 100%; margin-top: 2.5rem;
+            transition: all 0.18s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: none;
         }
-        input[type="file"] {
+        .btn-process:disabled { background: #cbd5e0; cursor: not-allowed; box-shadow: none; }
+        .message-box { margin-top: 1.5rem; padding: 1rem; border-radius: 0.75rem; font-weight: 600; text-align: center;
+            display: none; opacity: 0; transform: translateY(-10px); animation: fadeIn 0.5s ease forwards;
+        }
+        .message-box.info { background-color: #b3e6ff; color: #2c5282; }
+        .message-box.success { background-color: #9ae6b4; color: #2f855a; }
+        .message-box.error { background-color: #fed7d7; color: #c53030; }
+        .download-buttons {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            width: 100%;
+            flex-direction: row;
+        }
+        .btn-download {
+            flex: 1;
+            background: linear-gradient(45deg, #f6ad55, #ed8936); color: white; padding: 1rem 2rem; font-weight: 600;
+            font-size: 1rem; border-radius: 0.75rem; text-align: center; text-decoration: none; transition: all 0.18s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); display: none; align-items: center; justify-content: center;
+        }
+        .btn-download svg { margin-right: 0.5rem; width: 1.25rem; height: 1.25rem; }
+        .info-section { margin-top: 3rem; padding: 2.5rem; background-color: #ffffff; border-radius: 1.5rem; max-width: 1000px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .info-section h3 { font-weight: 700; font-size: 1.5rem; color: #2d3748; margin-bottom: 1rem; }
+        .info-section li { margin-bottom: 0.5rem; }
+        .warning-box { background-color: #fed7d7; color: #c53030; padding: 1.25rem; border-radius: 0.75rem; font-weight: 600; margin-top: 1.5rem; text-align: center; line-height: 1.5; }
+        .footer { margin-top: 3rem; text-align: center; font-size: 0.875rem; color: #718096; }
+        .footer-links { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; margin-top: 1rem; text-align: left; }
+        .footer-links ul { list-style: none; padding: 0; margin: 0; }
+        .footer-links li a { color: #2b6cb0; font-weight: 700; text-decoration: underline; transition: color 0.3s ease; }
+        .info-section a { color: #2b6cb0; font-weight: 700; text-decoration: underline; transition: color 0.3s ease; }
+        .dragover { border-color: #4299e1 !important; background-color: #e6f7ff !important; transform: translateY(-2px); }
+        .preview-container {
+            margin-top: 2.5rem;
             display: none;
+            gap: 1.5rem;
+            flex-direction: row;
         }
-        .custom-file-upload {
-            border: 2px dashed #8ab4f8; /* Accent color border */
-            background-color: #1f1f20; /* Container background */
-            padding: 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            text-align: center;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+        .preview-pane {
+            flex: 1;
+            padding: 1.5rem;
+            background-color: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            position: relative;
         }
-        .custom-file-upload:hover {
-            background-color: #3c4043; /* Darker grey on hover */
-            border-color: #a7c7ff; /* Even lighter accent on hover */
+        .preview-pane h4 { font-weight: 700; font-size: 1.1rem; color: #4a5568; margin-bottom: 1rem; }
+        .preview-pane pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.875rem;
+            color: #2d3748;
+            max-height: 500px;
         }
-        .custom-file-upload .upload-text, /* New class for the span text */
-        #file-name {
-            color: #8ab4f8; /* Gemini Accent Blue for file upload text and file name */
-        }
-        .message-box {
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            font-weight: 500;
-        }
-        .message-box.success {
-            background-color: #347c4a; /* Darker green for success */
-            color: #ffffff; /* Brighter White Text */
-        }
-        .message-box.error {
-            background-color: #a83232; /* Darker red for error */
-            color: #ffffff; /* Brighter White Text */
-        }
-        .message-box.info {
-            background-color: #3a699c; /* Darker blue for info */
-            color: #ffffff; /* Brighter White Text */
-        }
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.2); /* White transparent */
-            border-left-color: #8ab4f8; /* Gemini Accent Blue */
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 8px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg);}
-            100% { transform: rotate(360deg);}
-        }
-        .json-preview-box {
-            border: 1px solid #3c4043; /* Darker border */
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #1a1a1a; /* Sidebar background for consistency */
-            min-height: 200px;
-            max-height: 400px;
-            overflow-y: auto;
-            white-space: pre-wrap; /* Preserve whitespace and wrap text */
-            word-wrap: break-word; /* Break long words */
-            font-family: monospace;
-            font-size: 0.875rem; /* text-sm */
-            line-height: 1.5;
-            color: #ffffff; /* Brighter White Text */
-        }
-        .preview-title {
-            font-weight: 600;
-            color: #8ab4f8; /* Gemini Accent Blue for preview titles */
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        /* Mobile adjustments */
-        @media (max-width: 767px) { /* Below md breakpoint */
-            .sidebar {
-                width: 100%; /* Full width sidebar on mobile */
-                border-right: none;
-                border-bottom: 1px solid #3c4043; /* Darker border at the bottom */
-                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            }
-            .main-layout-container {
-                flex-direction: column; /* Stack sidebar and main content vertically */
-                margin: 0; /* Remove side margins on mobile */
-                border-radius: 0; /* No rounded corners on full-width mobile */
-                box-shadow: none; /* No shadow on full-width mobile */
-            }
-            body {
-                padding: 0; /* Remove body padding on mobile */
-            }
-            .main-content {
-                padding: 24px; /* Slightly less padding on mobile */
-            }
-            .tool-container {
-                max-width: 100%; /* Full width for tool content on mobile */
-            }
-        }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="antialiased">
-    <div class="main-layout-container">
-        <!-- 左サイドバー -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                このツールについて
-            </div>
-            <div class="sidebar-content">
-                <p>このツールは翻訳後のTheSims4MOD用のJSONファイルの {M0.he}、{F0.she} などのプレースホルダーを {M0.彼}、{F0.彼女}に変換するツールです。</p>
-
-                <h3 class="sidebar-section-title"><span class="accent-symbol">🔧</span> 機能</h3>
-                <ul>
-                    <li><span class="accent-symbol">📤</span> JSONファイルのアップロード</li>
-                    <li><span class="accent-symbol">✨</span> s4 stbl mergeを使った翻訳後の先頭アスタリスク削除</li>
-                    <li><span class="accent-symbol">💗</span> The Sims 4 Translatorを使った翻訳後の __PH_0__ や __PH_1__ といったトークン修正（※新しいバージョンではこのトークンは出ません）</li>
-                    <li><span class="accent-symbol">🌟</span> sims4jsonファイル翻訳修正ツールによる __PH_0__ や __PH_1__ の修正</li>
-                    <li><span class="accent-symbol">📊</span> 置き換え進捗のリアルタイム表示</li>
-                    <li><span class="accent-symbol">⏭️</span> 日本語テキストの自動スキップ</li>
-                    <li><span class="accent-symbol">📥</span> 翻訳済みファイルのダウンロード</li>
-                </ul>
-
-                <h3 class="sidebar-section-title">ℹ️ 対応タグ例</h3>
-                <ul class="no-bullet">
-                    <li>{M0.he} → {M0.彼}</li>
-                    <li>{F0.she} → {F0.彼女}</li>
-                    <li>{M0.his} → {M0.彼の}</li>
-                    <li>{F0.her} → {F0.彼女の}</li>
-                </ul>
-                <p>その他、多数のタグに対応しています。</p>
-
-                <h3 class="sidebar-section-title">🛠 他ツール</h3>
-                <ul class="no-bullet">
-                    <li><span class="accent-symbol">🔧</span> <a href="https://github.com/nonamesims4/The-Sims-4-MOD-JSON-" target="_blank" rel="noopener noreferrer">sims4jsonファイル翻訳修正ツール</a></li>
-                    <li><span class="accent-symbol">🔧</span> <a href="https://github.com/nonamesims4/JSON-CSV-" target="_blank" rel="noopener noreferrer">Sims4 MOD用 JSON/XML to CSV Converter</a></li>
-                    <li><span class="accent-symbol">🔧</span> <a href="https://github.com/nonamesims4/Sims4JSON-AI-" target="_blank" rel="noopener noreferrer">Sims4JSONファイル専用AI依頼文付きリトライツール<br />✨</a></li>
-                </ul>
-            </div>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Sims4Translator対応JSONファイル<br>プレースホルダー置換ツール</h1>
+        <p>
+            このツールはTheSims4Translator用のJSONファイルまたは<a href="https://stbl.sims4toolkit.com/" target="_blank" rel="noopener noreferrer">STBL Studio</a>やThe-Sims-4-MOD-JSON-から主力されるSTBL JSONファイルの <code>{M0.he}</code>、<code>{F0.she}</code> などのプレースホルダーを <code>{M0.彼}</code>、<code>{F0.彼女}</code> に変換します。<br>
+            翻訳機能はありません。翻訳は別ツールをご利用ください：<br>
+            <a href="https://nonamesims4.github.io/TheSims4Translator-JSON-/" target="_blank" rel="noopener noreferrer">The Sims 4 Translator 専用JSON変換ツール</a><br>
+            <a href="https://github.com/nonamesims4/The-Sims-4-MOD-JSON-" target="_blank" rel="noopener noreferrer">The-Sims-4-MOD-JSON-</a>
+        </p>
+    </div>
+    <label for="file-upload" class="file-upload-label" id="file-upload-area" role="button" aria-label="JSONファイルを選択またはドラッグ＆ドロップ">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm1 14h-2v-4H8l4-4 4 4h-3v4z"/></svg>
+        <span class="text-xl font-semibold">Sims4Translator用JSONファイルをここにドラッグ＆ドロップまたはクリックして選択</span>
+        <input id="file-upload" type="file" accept=".json" />
+    </label>
+    <div id="file-name">ファイルが選択されていません</div>
+    <button id="process-button" class="btn-process" disabled>ファイルを処理</button>
+    <div id="message-box" class="message-box" role="status" aria-live="polite"></div>
+    <!-- プレビュー表示エリア -->
+    <div id="preview-container" class="preview-container">
+        <div class="preview-pane">
+            <h4>変換前のJSON</h4>
+            <pre id="original-preview">ファイルを選択して下さい...</pre>
         </div>
-
-        <!-- 右メインコンテンツエリア -->
-        <div class="main-content">
-            <div class="tool-container">
-                <h1 class="text-3xl font-bold mb-4 text-center tracking-tight">Sims4専用JSONファイル<br />タグ置換ツール</h1>
-                <p class="text-sm text-center leading-relaxed">
-                    ファイルをアップロードして処理を押すだけで、TheSims MODのJSON内の指定タグを置換できます。<br>尚翻訳機能はありませんのでご注意ください。
-                </p>
-
-                <div class="w-full flex flex-col items-center space-y-8 mt-8"> <!-- Controls section -->
-                    <div class="w-full">
-                        <label for="file-upload" class="custom-file-upload block cursor-pointer">
-                            <div class="flex flex-col items-center justify-center h-32">
-                                <svg class="w-12 h-12 text-violet-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 0115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                </svg>
-                                <span class="upload-text font-semibold text-lg">JSONファイルをここにドラッグ＆ドロップするか、クリックして選択</span>
-                                <span id="file-name" class="text-sm mt-2">ファイルが選択されていません</span>
-                            </div>
-                        </label>
-                        <input id="file-upload" type="file" accept=".json" />
-                    </div>
-
-                    <button id="process-button" class="btn-primary w-full flex items-center justify-center" disabled>
-                        <span id="button-text">ファイルを処理</span>
-                        <span id="loading-spinner" class="loading-spinner hidden"></span>
-                    </button>
-
-                    <div id="message-box" class="message-box w-full hidden"></div>
-
-                    <a id="download-button" class="btn-secondary w-full hidden" href="#" download="output_normalized.json">
-                        処理済みファイルをダウンロード
-                    </a>
-                </div>
-
-                <!-- Preview Section -->
-                <div id="preview-section" class="w-full hidden mt-8">
-                    <div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-                        <div class="flex-1">
-                            <div class="preview-title">変換前JSON</div>
-                            <div id="original-json-content" class="json-preview-box">
-                                <!-- Original JSON content will be displayed here -->
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="preview-title">変換後JSON</div>
-                            <div id="processed-json-content" class="json-preview-box">
-                                <!-- Processed JSON content will be displayed here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="preview-pane">
+            <h4>変換後のJSON</h4>
+            <pre id="processed-preview">処理後にここに表示されます。</pre>
         </div>
     </div>
-
-    <script>
-        // DOM要素取得
-        const fileUpload = document.getElementById('file-upload');
-        const fileNameSpan = document.getElementById('file-name');
-        const processButton = document.getElementById('process-button');
-        const downloadButton = document.getElementById('download-button');
-        const messageBox = document.getElementById('message-box');
-        const buttonText = document.getElementById('button-text');
-        const loadingSpinner = document.getElementById('loading-spinner');
-
-        // Preview elements
-        const previewSection = document.getElementById('preview-section');
-        const originalJsonContent = document.getElementById('original-json-content');
-        const processedJsonContent = document.getElementById('processed-json-content');
-
-        let uploadedFileContent = null;
-        let processedFileContent = null; // 処理済みJSONの内容を保持
-        let outputFileName = 'output_normalized.json';
-        let downloadUrl = null;
-
-        // 置き換え辞書
-        const replaceDict = {
-            '{M0.HE}': '{M0.彼}',
-            '{M0.HIS}': '{M0.彼}',
-            "{M0.HE'S}": "{M0.彼}",
-            '{F0.SHE}': '{F0.彼女}',
-            '{F0.HER}': '{F0.彼女}',
-            "{F0.SHE'S}": "{F0.彼女}",
-            '{M1.HE}': '{M1.彼}',
-            '{M1.HIS}': '{M1.彼}',
-            '{F1.SHE}': '{F1.彼女}',
-            '{F1.HER}': '{F1.彼女}',
-
-            '{0.SIMFIRSTNAME}': '{0.SimFirstName}',
-            '{1.SIMFIRSTNAME}': '{1.SimFirstName}',
-
-            '{0.SIMPRONOUNSUBJECTIVE}': '{M0.彼}{F0.彼女}',
-            '{0.SIMPRONOUNPOSSESSIVEDEPENDENT}': '{M0.彼}{F0.彼女}',
-            '{0.SIMPRONOUNREFLEXIVE}': '{M0.彼}{F0.彼女}',
-            '{0.SIMPRONOUNOBJECTIVE}': '{M0.彼}{F0.彼女}',
-
-            '{F0.彼女の}{F0.彼女}': '{F0.彼女}',
-            '{F0.彼女}{F0.彼女の}': '{F0.彼女}',
-            '{M0.彼の}{M0.彼}': '{M0.彼}',
-            '{M0.彼}{M0.彼の}': '{M0.彼}',
-
-            '{F0.彼女の}の': '{F0.彼女}',
-            '{M0.彼の}の': '{M0.彼}',
-            '{F0.彼女に}に': '{F0.彼女}',
-            '{M0.彼に}に': '{M0.彼}',
-            '{F0.彼女が}が': '{F0.彼女}',
-            '{M0.彼が}が': '{M0.彼}',
-            '{F0.彼女は}は': '{F0.彼女}',
-            '{M0.彼は}は': '{M0.彼}',
-            '{F0.彼女を}を': '{F0.彼女}',
-            '{M0.彼を}を': '{M0.彼}',
-            '{F0.彼女と}と': '{F0.彼女}',
-            '{M0.彼と}と': '{M0.彼}',
-            '{F0.彼女の}{F0.彼女}は': '{F0.彼女}',
-            '{M0.彼の}{M0.彼}は': '{M0.彼}',
-
-            // プレースホルダートークン（大文字小文字いずれも対応）
-            '__PH_0__': '{0.SimFirstName}',
-            '__ph_0__': '{0.SimFirstName}',
-            '__PH_1__': '{1.SimFirstName}',
-            '__ph_1__': '{1.SimFirstName}',
+    <div class="download-buttons">
+        <a id="download-translator" class="btn-download" download>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-4H8l4-4 4 4h-3v4z"/></svg>
+            Sims4Translator用ファイルをダウンロード
+        </a>
+        <a id="download-normal" class="btn-download" download>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-4H8l4-4 4 4h-3v4z"/></svg>
+            普通JSONファイルをダウンロード
+        </a>
+    </div>
+    <div class="warning-box">
+        ⚠️ 使用上の注意⚠️<br>
+        Sims4Translatorに読み込ませる際は、必ず「Sims4Translator用ファイルをダウンロード」ボタンで保存したJSONファイルを使用してください。<br>
+        STBL JSONファイルを置き換えた場合は、STBL JSON形式で出力されます。<br>
+        The Sims 4 Translator用で使用する場合は、別途「The Sims 4 Translator専用JSON変換ツール」で変換してください。
+    </div>
+</div>
+<div class="info-section">
+    <h3>ツールの主な機能</h3>
+    <ul>
+        <li>
+            <strong>ファイルのアップロード:</strong> ドラッグ＆ドロップまたはクリックでJSONファイルを選択できます。
+        </li>
+        <li>
+            <strong>プレースホルダーの自動置換:</strong> <code>{M0.he}</code> や <code>{F0.she}</code> などの英語プレースホルダーを、<code>{M0.彼}</code> や <code>{F0.彼女}</code> といった日本語表記に自動で変換します。
+        </li>
+        <li>
+            <strong>プレビュー表示機能:</strong> 処理前と処理後のJSONの内容を左右に並べて表示することで、変更内容をひと目で確認できます。
+        </li>
+        <li>
+            <strong>置換数の表示:</strong> 処理完了時に、いくつのプレースホルダーが置換されたかを正確に表示します。
+        </li>
+        <li>
+            <strong>ネストされたデータへの対応:</strong> JSONの <code>Value</code> がオブジェクトや配列になっている場合でも、その中の文字列を再帰的に探し出して置換します。
+        </li>
+    </ul>
+    <h3>さらに翻訳をブラッシュアップしたい方へ</h3>
+    <p>
+        本ツールのあと、より自然な日本語表現に仕上げたい場合は、
+        <a href="https://nonamesims4.github.io/Sims4JSON-AI-/" target="_blank" rel="noopener noreferrer">Sims4JSONファイル専用 AI依頼文付きリトライツール✨</a>もぜひお試しください。<br>
+        AIを活用したリライトやタグの高度置換が可能です。
+    </p>
+</div>
+<div class="footer">
+    <h3>🛠 他ツールのご案内</h3>
+    <p>本ツールとあわせて、以下の関連ツールもご活用ください。（すべて別窓で開きます）</p>
+    <div class="footer-links">
+        <ul>
+            <li>🌟 <a href="https://nonamesims4.github.io/TheSims4Translator-JSON-/" target="_blank" rel="noopener noreferrer">The Sims 4 Translator 専用 JSON変換ツール</a></li>
+            <li>🌟 <a href="https://github.com/nonamesims4" target="_blank" rel="noopener noreferrer">nonamesims4 GitHubリポジトリ一覧</a></li>
+            <li>🌟 <a href="https://www.patreon.com/posts/da-shitawu-yi-135996994" target="_blank" rel="noopener noreferrer">便利ツール簡易まとめ (Patreon)</a></li>
+            <li>🌟 <a href="https://www.perplexity.ai/" target="_blank" rel="noopener noreferrer">このページのコード作成（Perplexity AI）</a></li>
+            <li>🌟 <a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">このページの作成（Gemini）</a></li>
+            <li>🌟 <a href="https://chatgpt.com/?model=auto" target="_blank" rel="noopener noreferrer">このページのデザイン（ChatGPT）</a></li>
+            <li><!-- ここに追加のリンクを追加してください --></li>
+        </ul>
+    </div>
+</div>
+<script>
+    const fileUpload = document.getElementById('file-upload');
+    const fileNameEl = document.getElementById('file-name');
+    const processBtn = document.getElementById('process-button');
+    const messageBox = document.getElementById('message-box');
+    const dlTranslator = document.getElementById('download-translator');
+    const dlNormal = document.getElementById('download-normal');
+    const fileUploadArea = document.getElementById('file-upload-area');
+    const previewContainer = document.getElementById('preview-container');
+    const originalPreview = document.getElementById('original-preview');
+    const processedPreview = document.getElementById('processed-preview');
+    let uploadedData = null;
+    let uploadedFileName = 'output';
+    let processedTranslator = null;
+    let processedNormal = null;
+    let lastTranslatorURL = null;
+    let lastNormalURL = null;
+    // 置換辞書（キーは大文字で表現）
+    const replaceDict = {
+        '{M0.HE}': '{M0.彼}',
+        '{M0.HIS}': '{M0.彼の}',
+        "{M0.HE'S}": "{M0.彼は}",
+        '{F0.SHE}': '{F0.彼女}',
+        '{F0.HER}': '{F0.彼女の}',
+        "{F0.SHE'S}": "{F0.彼女は}",
+        '{M1.HE}': '{M1.彼}',
+        '{M1.HIS}': '{M1.彼の}',
+        '{F1.SHE}': '{F1.彼女}',
+        '{F1.HER}': '{F1.彼女の}',
+        '{0.SIMFIRSTNAME}': '{0.SimFirstName}',
+        '{1.SIMFIRSTNAME}': '{1.SimFirstName}',
+        '__PH_0__': '{0.SimFirstName}',
+        '__PH_1__': '{1.SimFirstName}',
+        '__ph_0__': '{0.SimFirstName}',
+        '__ph_1__': '{1.SimFirstName}'
+    };
+    // 現在の処理での置換数をカウント
+    let replacementsCount = 0;
+    function showMessage(text, type = 'info') {
+        messageBox.textContent = text;
+        messageBox.className = `message-box ${type}`;
+        messageBox.style.display = 'block';
+    }
+    function escapeRegExp(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    /**
+     * 文字列中のタグを正規化・置換する関数
+     * - {} 内の英数字タグを大文字化してから辞書で置換（辞書は大文字キー）
+     * - 前後のアスタリスクを削除（例: "*text*" の余分な * を取り除く）
+     * - 置換回数を replacementsCount に加算
+     */
+    function normalizeTags(text) {
+        if (typeof text !== 'string') return text;
+        // {} 内のタグを大文字化（英数字・._'- のみを対象）
+        let processedText = text.replace(/\{[0-9a-zA-Z\._'\-]+\}/g, m => m.toUpperCase());
+        // 行頭・行末の単独アスタリスクを削除（必要なら調整）
+        processedText = processedText.replace(/^\*\s*/, '').replace(/\s*\*\s*$/, '');
+        // 置換辞書に基づいて置換（大文字/小文字を無視してマッチ）
+        for (const key in replaceDict) {
+            const pattern = new RegExp(escapeRegExp(key), 'gi');
+            processedText = processedText.replace(pattern, (match) => {
+                // マッチがあればカウントし、置換テキストを返す
+                replacementsCount++;
+                return replaceDict[key];
+            });
+        }
+        return processedText;
+    }
+    /**
+     * 任意の値（文字列・配列・オブジェクト）を再帰的に処理する
+     * 文字列は normalizeTags に渡す
+     */
+    function deepProcess(value) {
+        if (typeof value === 'string') {
+            return normalizeTags(value);
+        }
+        if (Array.isArray(value)) {
+            return value.map(v => deepProcess(v));
+        }
+        if (value && typeof value === 'object') {
+            // 新しいオブジェクトを作る（不変性を保つ）
+            const out = Array.isArray(value) ? [] : {};
+            for (const k in value) {
+                if (Object.prototype.hasOwnProperty.call(value, k)) {
+                    out[k] = deepProcess(value[k]);
+                }
+            }
+            return out;
+        }
+        return value;
+    }
+    function resetUI() {
+        fileNameEl.textContent = 'ファイルが選択されていません';
+        processBtn.disabled = true;
+        messageBox.style.display = 'none';
+        dlTranslator.style.display = 'none';
+        dlNormal.style.display = 'none';
+        uploadedData = null;
+        processedTranslator = null;
+        processedNormal = null;
+        uploadedFileName = 'output';
+        // revoke previous URLs just in case
+        if (lastTranslatorURL) {
+            URL.revokeObjectURL(lastTranslatorURL);
+            lastTranslatorURL = null;
+        }
+        if (lastNormalURL) {
+            URL.revokeObjectURL(lastNormalURL);
+            lastNormalURL = null;
+        }
+        originalPreview.textContent = 'ファイルを選択して下さい...';
+        processedPreview.textContent = '処理後にここに表示されます。';
+        previewContainer.style.display = 'none';
+    }
+    // ファイル選択イベント
+    fileUpload.addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (!file) {
+            resetUI();
+            return;
+        }
+        uploadedFileName = (file.name || 'output').replace(/\.json$/i, '') || 'output';
+        fileNameEl.textContent = file.name;
+        processBtn.disabled = false;
+        messageBox.style.display = 'none';
+        const reader = new FileReader();
+        reader.onload = evt => {
+            try {
+                uploadedData = JSON.parse(evt.target.result);
+                originalPreview.textContent = JSON.stringify(uploadedData, null, 2);
+                previewContainer.style.display = 'flex';
+                showMessage('ファイルが読み込まれました。処理ボタンを押してください。', 'info');
+            } catch (err) {
+                uploadedData = null;
+                processBtn.disabled = true;
+                showMessage('JSONの解析に失敗しました。正しいJSONファイルを選択してください。', 'error');
+                console.error(err);
+            }
         };
-
-        // メッセージ表示関数
-        function showMessage(message, type) {
-            messageBox.textContent = message;
-            messageBox.className = `message-box w-full ${type}`;
-            messageBox.classList.remove('hidden');
+        reader.readAsText(file);
+    });
+    // ドラッグ＆ドロップイベント
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileUploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+    fileUploadArea.addEventListener('dragenter', () => fileUploadArea.classList.add('dragover'), false);
+    fileUploadArea.addEventListener('dragleave', () => fileUploadArea.classList.remove('dragover'), false);
+    fileUploadArea.addEventListener('drop', handleDrop, false);
+    function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+    function handleDrop(e) {
+        fileUploadArea.classList.remove('dragover');
+        const dt = e.dataTransfer;
+        if (!dt || !dt.files || !dt.files[0]) return;
+        const file = dt.files[0];
+        // データを file input にセットして change を発火
+        fileUpload.files = dt.files;
+        fileUpload.dispatchEvent(new Event('change'));
+    }
+    // 変換処理
+    processBtn.addEventListener('click', () => {
+        if (!uploadedData) {
+            showMessage('先にJSONファイルをアップロードしてください。', 'error');
+            return;
         }
-
-        // 正規表現の特殊文字をエスケープ
-        function escapeRegExp(string) {
-            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        }
-
-        // プレースホルダートークンの文字間に \s* を入れて大文字小文字無視のパターンを作る
-        function makeFlexiblePattern(token) {
-            const parts = token.split('');
-            const patternStr = parts.map(c => {
-                if ('{}[]().*+?^$|\\'.includes(c)) {
-                    return '\\' + c;
-                }
-                return c;
-            }).join('\\s*');
-            return new RegExp(patternStr, 'gi');
-        }
-
-        // タグ置換関数
-        function normalizeTags(text) {
-            // タグ内の英字を大文字に正規化
-            text = text.replace(/\{[0-9a-zA-Z\._'\-]+\}/g, match => match.toUpperCase());
-
-            // 文章の頭にあるアスタリスクとそれに続く空白を削除
-            text = text.replace(/^\*\s*/, '');
-
-            // プレースホルダートークンの直前にあるアスタリスクとそれに続く空白を削除
-            text = text.replace(/\*\s*(__PH_0__|__PH_1__)/gi, '$1');
-
-            for (const k in replaceDict) {
-                const v = replaceDict[k];
-                let pattern;
-                if (k.toUpperCase().includes('__PH_')) {
-                    pattern = makeFlexiblePattern(k);
+        processBtn.disabled = true;
+        showMessage('処理中...', 'info');
+        // 少し遅延を入れてUIが更新されるようにする
+        setTimeout(() => {
+            try {
+                // deep copy
+                const dataCopy = JSON.parse(JSON.stringify(uploadedData));
+                // reset counter
+                replacementsCount = 0;
+                const hasLocale = dataCopy.Locale !== undefined || dataCopy.locale !== undefined;
+                const entriesKey = dataCopy.Entries ? 'Entries' : (dataCopy.entries ? 'entries' : null);
+                const entries = entriesKey ? dataCopy[entriesKey] : null;
+                if (hasLocale && Array.isArray(entries)) {
+                    // Sims4Translator 形式（{ Locale, Entries: [{ Key, Value }, ...] }）
+                    const replacedEntries = entries.map(entry => {
+                        const origKey = entry.Key || entry.key || '';
+                        const processedKey = (origKey || '').toUpperCase();
+                        const rawValue = entry.Value !== undefined ? entry.Value : entry.value;
+                        return {
+                            Key: processedKey,
+                            Value: deepProcess(rawValue === undefined ? '' : rawValue)
+                        };
+                    });
+                    processedTranslator = { Locale: dataCopy.Locale || dataCopy.locale || 'JPN_JP', Entries: replacedEntries };
+                    processedNormal = replacedEntries.map(e => ({ key: e.Key.toLowerCase(), value: e.Value }));
+                } else if (Array.isArray(dataCopy)) {
+                    // 通常のJSON配列形式 [{ Key/ key, Value / value }, ...]
+                    processedTranslator = null;
+                    processedNormal = dataCopy.map(entry => {
+                        const origKey = entry.Key || entry.key || '';
+                        const rawValue = entry.Value !== undefined ? entry.Value : entry.value;
+                        return { key: (origKey || '').toLowerCase(), value: deepProcess(rawValue === undefined ? '' : rawValue) };
+                    });
+                } else if (dataCopy && typeof dataCopy === 'object' && Object.keys(dataCopy).length > 0 && Array.isArray(dataCopy.Entries ?? dataCopy.entries)) {
+                    // 念のためのフォールバック
+                    const arr = dataCopy.Entries ?? dataCopy.entries;
+                    const replacedEntries = arr.map(entry => {
+                        const origKey = entry.Key || entry.key || '';
+                        const rawValue = entry.Value !== undefined ? entry.Value : entry.value;
+                        return {
+                            Key: (origKey || '').toUpperCase(),
+                            Value: deepProcess(rawValue === undefined ? '' : rawValue)
+                        };
+                    });
+                    processedTranslator = { Locale: dataCopy.Locale || dataCopy.locale || 'JPN_JP', Entries: replacedEntries };
+                    processedNormal = replacedEntries.map(e => ({ key: e.Key.toLowerCase(), value: e.Value }));
                 } else {
-                    pattern = new RegExp(escapeRegExp(k), 'gi');
+                    throw new Error('非対応のJSON形式です。配列または { Locale, Entries } 形式のいずれかを指定してください。');
                 }
-                text = text.replace(pattern, v);
-            }
-            return text;
-        }
-
-        // ファイル読み込み処理
-        fileUpload.addEventListener('change', event => {
-            const file = event.target.files[0];
-            if (file) {
-                fileNameSpan.textContent = file.name;
-                processButton.disabled = false;
-                downloadButton.classList.add('hidden');
-                messageBox.classList.add('hidden');
-                previewSection.classList.add('hidden'); // ファイル選択時にプレビューを非表示
-                originalJsonContent.textContent = '';
-                processedJsonContent.textContent = '';
-                uploadedFileContent = null;
-                processedFileContent = null;
-                downloadUrl && URL.revokeObjectURL(downloadUrl);
-                downloadUrl = null;
-
-                const reader = new FileReader();
-                reader.onload = e => {
-                    try {
-                        uploadedFileContent = JSON.parse(e.target.result);
-                        originalJsonContent.textContent = JSON.stringify(uploadedFileContent, null, 2); // 元のJSONをプレビュー
-                        processedJsonContent.textContent = ''; // 処理済みJSONをクリア
-                        previewSection.classList.remove('hidden'); // プレビューセクションを表示
-                        showMessage('ファイルを読み込みました。処理ボタンをクリックしてください。', 'info');
-                    } catch (error) {
-                        showMessage('JSONファイルの解析に失敗しました。有効なJSONファイルを選択してください。', 'error');
-                        uploadedFileContent = null;
-                        processButton.disabled = true;
-                        previewSection.classList.add('hidden'); // エラー時はプレビューを非表示
-                    }
-                };
-                reader.readAsText(file);
-            } else {
-                fileNameSpan.textContent = 'ファイルが選択されていません';
-                processButton.disabled = true;
-                previewSection.classList.add('hidden');
-            }
-        });
-
-        // ファイル処理ボタン クリック処理
-        processButton.addEventListener('click', () => {
-            if (!uploadedFileContent) {
-                showMessage('まずJSONファイルをアップロードしてください。', 'error');
-                return;
-            }
-
-            buttonText.textContent = '処理中...';
-            loadingSpinner.classList.remove('hidden');
-            processButton.disabled = true;
-            downloadButton.classList.add('hidden');
-            messageBox.classList.add('hidden');
-
-            setTimeout(() => {
-                try {
-                    const tempProcessedData = JSON.parse(JSON.stringify(uploadedFileContent)); // 深いコピー
-                    for (const entry of tempProcessedData) {
-                        const val = entry.value;
-                        if (typeof val === 'string') {
-                            entry.value = normalizeTags(val);
-                        }
-                    }
-                    processedFileContent = tempProcessedData; // 処理済み内容を保存
-
-                    processedJsonContent.textContent = JSON.stringify(processedFileContent, null, 2); // 処理済みJSONをプレビュー
-
-                    const blob = new Blob([JSON.stringify(processedFileContent, null, 2)], { type: 'application/json' });
-                    downloadUrl = URL.createObjectURL(blob);
-                    downloadButton.href = downloadUrl;
-                    downloadButton.download = outputFileName;
-                    downloadButton.classList.remove('hidden');
-
-                    showMessage('ファイルの処理が完了しました。下のダウンロードボタンをクリックするか、プレビューを確認してください。', 'success');
-                } catch (error) {
-                    console.error(error);
-                    showMessage('ファイルの処理中にエラーが発生しました。', 'error');
-                    if (downloadUrl) {
-                        URL.revokeObjectURL(downloadUrl);
-                        downloadUrl = null;
-                    }
-                } finally {
-                    buttonText.textContent = 'ファイルを処理';
-                    loadingSpinner.classList.add('hidden');
-                    processButton.disabled = false;
+                // download 用 Blob を作成し、以前の URL を破棄
+                if (lastTranslatorURL) { URL.revokeObjectURL(lastTranslatorURL); lastTranslatorURL = null; }
+                if (lastNormalURL) { URL.revokeObjectURL(lastNormalURL); lastNormalURL = null; }
+                if (processedTranslator) {
+                    const blobT = new Blob([JSON.stringify(processedTranslator, null, 2)], { type: 'application/json' });
+                    lastTranslatorURL = URL.createObjectURL(blobT);
+                    dlTranslator.href = lastTranslatorURL;
+                    dlTranslator.download = `${uploadedFileName}-translator.json`;
+                    dlTranslator.style.display = 'flex';
+                } else {
+                    dlTranslator.style.display = 'none';
                 }
-            }, 100);
-        });
-
-        // ダウンロードボタンクリック時にメッセージとURL解放処理
-        downloadButton.addEventListener('click', () => {
-            showMessage('ファイルをダウンロードしています...', 'info');
-            if (downloadUrl) {
-                setTimeout(() => {
-                    URL.revokeObjectURL(downloadUrl);
-                    downloadUrl = null;
-                }, 1500);
+                if (processedNormal) {
+                    const blobN = new Blob([JSON.stringify(processedNormal, null, 2)], { type: 'application/json' });
+                    lastNormalURL = URL.createObjectURL(blobN);
+                    dlNormal.href = lastNormalURL;
+                    dlNormal.download = `${uploadedFileName}-normal.json`;
+                    dlNormal.style.display = 'flex';
+                } else {
+                    dlNormal.style.display = 'none';
+                }
+                processedPreview.textContent = JSON.stringify(processedTranslator || processedNormal, null, 2);
+                showMessage(`処理が完了しました。置換箇所: ${replacementsCount} 箇所。ダウンロードボタンから保存できます。`, 'success');
+            } catch (err) {
+                console.error(err);
+                showMessage('エラーが発生しました: ' + (err && err.message ? err.message : String(err)), 'error');
+                dlTranslator.style.display = 'none';
+                dlNormal.style.display = 'none';
+            } finally {
+                processBtn.disabled = false;
             }
-        });
-    </script>
+        }, 80);
+    });
+    // ページ離脱時に作成した ObjectURL を破棄
+    window.addEventListener('unload', () => {
+        if (lastTranslatorURL) URL.revokeObjectURL(lastTranslatorURL);
+        if (lastNormalURL) URL.revokeObjectURL(lastNormalURL);
+    });
+</script>
 </body>
 </html>
