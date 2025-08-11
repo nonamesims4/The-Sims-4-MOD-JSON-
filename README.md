@@ -1,7 +1,7 @@
 このツールについて
 
 このツールはTheSims4MOD用のJSONファイルを自動で日本語に翻訳しながら{M0.he}、{F0.she} などのプレースホルダーを {M0.彼}、{F0.彼女}に変換できるツールです。翻訳後でも{M0.he}、{F0.she} を {M0.彼}、{F0.彼女}に変換できます。  
-🆕翻訳なしで{M0.he}、{F0.she} を {M0.彼}、{F0.彼女}に変換だけしたい人専用ツールできました→<a href="https://nonamesims4.github.io/The-Sims-4-MOD-JSON-/" target="_blank" rel="noopener noreferrer">Sims4専用JSONファイルタグ置換ツール翻訳なしバージョン</a>    
+🆕翻訳なしで{M0.he}、{F0.she} を {M0.彼}、{F0.彼女}に変換だけしたい人専用ツールできました→<a href="https://nonamesims4.github.io/The-Sims-4-MOD-JSON-/" target="_blank" rel="noopener noreferrer">Sims4Translator対応JSONファイルプレースホルダー置換ツール</a>    
 🆕<a href="https://github.com/voky1" target="_blank" rel="noopener noreferrer">TheSims4Translator</a>から出力される"Entries" 構造対応のjsonファイルに対応できるようになりました。出力後のJSONファイルは他ツールに使用できます。 
 
 
