@@ -207,25 +207,61 @@
     let processedNormal = null;
     let lastTranslatorURL = null;
     let lastNormalURL = null;
+
     // 置換辞書（キーは大文字で表現）
     const replaceDict = {
         '{M0.HE}': '{M0.彼}',
-        '{M0.HIS}': '{M0.彼の}',
-        "{M0.HE'S}": "{M0.彼は}",
+        '{M0.HIS}': '{M0.彼}',
+        "{M0.HE'S}": "{M0.彼}",
         '{F0.SHE}': '{F0.彼女}',
-        '{F0.HER}': '{F0.彼女の}',
-        "{F0.SHE'S}": "{F0.彼女は}",
+        '{F0.HER}': '{F0.彼女}',
+        "{F0.SHE'S}": "{F0.彼女}",
         '{M1.HE}': '{M1.彼}',
-        '{M1.HIS}': '{M1.彼の}',
+        '{M1.HIS}': '{M1.彼}',
         '{F1.SHE}': '{F1.彼女}',
-        '{F1.HER}': '{F1.彼女の}',
+        '{F1.HER}': '{F1.彼女}',
         '{0.SIMFIRSTNAME}': '{0.SimFirstName}',
         '{1.SIMFIRSTNAME}': '{1.SimFirstName}',
         '__PH_0__': '{0.SimFirstName}',
         '__PH_1__': '{1.SimFirstName}',
         '__ph_0__': '{0.SimFirstName}',
-        '__ph_1__': '{1.SimFirstName}'
+        '__ph_1__': '{1.SimFirstName}',
+        // 新しい置換ルール
+        '{0.SIMPRONOUNSUBJECTIVE}': '{M0.彼}{F0.彼女}',
+        '{0.SIMPRONOUNPOSSESSIVEDEPENDENT}': '{M0.彼}{F0.彼女}',
+        '{0.SIMPRONOUNREFLEXIVE}': '{M0.彼}{F0.彼女}',
+        '{0.SIMPRONOUNOBJECTIVE}': '{M0.彼}{F0.彼女}',
+        '{F0.彼女の}': '{F0.彼女}',
     };
+
+    // 日本語の助詞などの置換ルール（後方参照を使い、より柔軟に対応）
+    const regexRules = [
+        // ユーザーが追加を希望したルール
+        { pattern: /\{M0\.彼\}\s*\{F0\.彼女の\}/gi, replacement: '{M0.彼}{F0.彼女の}' },
+        { pattern: /\{M0\.彼の\}\s*\{F0\.彼女\}/gi, replacement: '{M0.彼の}{F0.彼女}' },
+        // 連続する同じタグの除去
+        { pattern: /\{F0\.彼女の\}\s*\{F0\.彼女\}/gi, replacement: '{F0.彼女}' },
+        { pattern: /\{F0\.彼女\}\s*\{F0\.彼女の\}/gi, replacement: '{F0.彼女}' },
+        { pattern: /\{M0\.彼の\}\s*\{M0\.彼\}/gi, replacement: '{M0.彼}' },
+        { pattern: /\{M0\.彼\}\s*\{M0\.彼の\}/gi, replacement: '{M0.彼}' },
+        // 日本語の助詞などの除去
+        { pattern: /(\{F0\.彼女の\})の/g, replacement: '$1' },
+        { pattern: /(\{M0\.彼の\})の/g, replacement: '$1' },
+        { pattern: /(\{F0\.彼女に\})に/g, replacement: '$1' },
+        { pattern: /(\{M0\.彼に\})に/g, replacement: '$1' },
+        { pattern: /(\{F0\.彼女が\})が/g, replacement: '$1' },
+        { pattern: /(\{M0\.彼が\})が/g, replacement: '$1' },
+        { pattern: /(\{F0\.彼女は\})は/g, replacement: '$1' },
+        { pattern: /(\{M0\.彼は\})は/g, replacement: '$1' },
+        { pattern: /(\{F0\.彼女を\})を/g, replacement: '$1' },
+        { pattern: /(\{M0\.彼を\})を/g, replacement: '$1' },
+        { pattern: /(\{F0\.彼女と\})と/g, replacement: '$1' },
+        { pattern: /(\{M0\.彼と\})と/g, replacement: '$1' },
+        // ユーザーが追加を希望したルール（前回まで）
+        { pattern: /\{F0\.彼女の\}\s*\{F0\.彼女\}は/gi, replacement: '{F0.彼女}' },
+        { pattern: /\{M0\.彼の\}\s*\{M0\.彼\}は/gi, replacement: '{M0.彼}' },
+    ];
+
     // 現在の処理での置換数をカウント
     let replacementsCount = 0;
     function showMessage(text, type = 'info') {
@@ -236,6 +272,7 @@
     function escapeRegExp(str) {
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
+
     /**
      * 文字列中のタグを正規化・置換する関数
      * - {} 内の英数字タグを大文字化してから辞書で置換（辞書は大文字キー）
@@ -244,21 +281,38 @@
      */
     function normalizeTags(text) {
         if (typeof text !== 'string') return text;
+        let processedText = text;
         // {} 内のタグを大文字化（英数字・._'- のみを対象）
-        let processedText = text.replace(/\{[0-9a-zA-Z\._'\-]+\}/g, m => m.toUpperCase());
-        // 行頭・行末の単独アスタリスクを削除（必要なら調整）
+        processedText = processedText.replace(/\{[0-9a-zA-Z\._'\-]+\}/g, m => m.toUpperCase());
+        // 前後のアスタリスクを削除（必要なら調整）
         processedText = processedText.replace(/^\*\s*/, '').replace(/\s*\*\s*$/, '');
-        // 置換辞書に基づいて置換（大文字/小文字を無視してマッチ）
+        // 辞書置換
         for (const key in replaceDict) {
             const pattern = new RegExp(escapeRegExp(key), 'gi');
-            processedText = processedText.replace(pattern, (match) => {
-                // マッチがあればカウントし、置換テキストを返す
+            const newText = processedText.replace(pattern, (match) => {
                 replacementsCount++;
                 return replaceDict[key];
             });
+            if (newText !== processedText) {
+                processedText = newText;
+            }
+        }
+        // 正規表現置換
+        for (const rule of regexRules) {
+            const newText = processedText.replace(rule.pattern, (match) => {
+                // 変更があった場合のみカウント
+                if (match !== rule.replacement) {
+                    replacementsCount++;
+                }
+                return rule.replacement;
+            });
+            if (newText !== processedText) {
+                processedText = newText;
+            }
         }
         return processedText;
     }
+
     /**
      * 任意の値（文字列・配列・オブジェクト）を再帰的に処理する
      * 文字列は normalizeTags に渡す
@@ -282,6 +336,7 @@
         }
         return value;
     }
+
     function resetUI() {
         fileNameEl.textContent = 'ファイルが選択されていません';
         processBtn.disabled = true;
